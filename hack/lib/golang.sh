@@ -424,9 +424,9 @@ kube::golang::build_kube_toolchain() {
   binaries=($(kube::golang::binaries_from_targets "${targets[@]}"))
 
   kube::log::status "Building the toolchain targets:" "${binaries[@]}"
-  go install "${goflags[@]:+${goflags[@]}}" \
+  go install "${goflags[@]:-}" \
         -ldflags "${goldflags}" \
-        "${binaries[@]:+${binaries[@]}}"
+        "${binaries[@]:-}"
 }
 
 # Try and replicate the native binary placement of go install without
@@ -477,18 +477,18 @@ kube::golang::build_binaries_for_platform() {
 
   if [[ -n ${use_go_build:-} ]]; then
     kube::log::progress "    "
-    for binary in "${statics[@]:+${statics[@]}}"; do
+    for binary in "${statics[@]:-}"; do
       local outfile=$(kube::golang::output_filename_for_binary "${binary}" "${platform}")
       CGO_ENABLED=0 go build -o "${outfile}" \
-        "${goflags[@]:+${goflags[@]}}" \
+        "${goflags[@]:-}" \
         -ldflags "${goldflags}" \
         "${binary}"
       kube::log::progress "*"
     done
-    for binary in "${nonstatics[@]:+${nonstatics[@]}}"; do
+    for binary in "${nonstatics[@]:-}"; do
       local outfile=$(kube::golang::output_filename_for_binary "${binary}" "${platform}")
       go build -o "${outfile}" \
-        "${goflags[@]:+${goflags[@]}}" \
+        "${goflags[@]:-}" \
         -ldflags "${goldflags}" \
         "${binary}"
       kube::log::progress "*"
@@ -497,18 +497,18 @@ kube::golang::build_binaries_for_platform() {
   else
     # Use go install.
     if [[ "${#nonstatics[@]}" != 0 ]]; then
-      go install "${goflags[@]:+${goflags[@]}}" \
+      go install "${goflags[@]:-}" \
         -ldflags "${goldflags}" \
-        "${nonstatics[@]:+${nonstatics[@]}}"
+        "${nonstatics[@]:-}"
     fi
     if [[ "${#statics[@]}" != 0 ]]; then
-      CGO_ENABLED=0 go install -installsuffix cgo "${goflags[@]:+${goflags[@]}}" \
+      CGO_ENABLED=0 go install -installsuffix cgo "${goflags[@]:-}" \
         -ldflags "${goldflags}" \
-        "${statics[@]:+${statics[@]}}"
+        "${statics[@]:-}"
     fi
   fi
 
-  for test in "${tests[@]:+${tests[@]}}"; do
+  for test in "${tests[@]:-}"; do
     local outfile=$(kube::golang::output_filename_for_binary "${test}" \
       "${platform}")
 
@@ -534,13 +534,13 @@ kube::golang::build_binaries_for_platform() {
     # doing a staleness check on k8s.io/kubernetes/test/e2e package always
     # returns true (always stale). And that's why we need to install the
     # test package.
-    go install "${goflags[@]:+${goflags[@]}}" \
+    go install "${goflags[@]:-}" \
         -ldflags "${goldflags}" \
         "${testpkg}"
 
     mkdir -p "$(dirname ${outfile})"
     go test -c \
-      "${goflags[@]:+${goflags[@]}}" \
+      "${goflags[@]:-}" \
       -ldflags "${goldflags}" \
       -o "${outfile}" \
       "${testpkg}"
@@ -616,7 +616,7 @@ kube::golang::build_binaries() {
       targets=("${KUBE_ALL_TARGETS[@]}")
     fi
 
-    local -a platforms=("${KUBE_BUILD_PLATFORMS[@]:+${KUBE_BUILD_PLATFORMS[@]}}")
+    local -a platforms=("${KUBE_BUILD_PLATFORMS[@]:-}")
     if [[ ${#platforms[@]} -eq 0 ]]; then
       platforms=("${host_platform}")
     fi
