@@ -184,7 +184,7 @@ func (es *e2eService) startEtcd() (*killCmd, error) {
 	// configuration (e.g. --name in version 0.4.9)
 	cmd.Dir = es.etcdDataDir
 	hcc := newHealthCheckCommand(
-		"http://127.0.0.1:4001/v2/keys/", // Trailing slash is required,
+		"http://127.0.0.1:2379/v2/keys/", // Trailing slash is required,
 		cmd,
 		"etcd.log")
 	return &killCmd{name: "etcd", cmd: cmd}, es.startServer(hcc)
@@ -192,7 +192,7 @@ func (es *e2eService) startEtcd() (*killCmd, error) {
 
 func (es *e2eService) startApiServer() (*killCmd, error) {
 	cmd := exec.Command("sudo", getApiServerBin(),
-		"--etcd-servers", "http://127.0.0.1:4001",
+		"--etcd-servers", "http://127.0.0.1:2379",
 		"--insecure-bind-address", "0.0.0.0",
 		"--service-cluster-ip-range", "10.0.0.1/24",
 		"--kubelet-port", "10250",

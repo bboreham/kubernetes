@@ -43,7 +43,7 @@ const (
 func newStorageFactory() genericapiserver.StorageFactory {
 	config := storagebackend.Config{
 		Prefix:     genericoptions.DefaultEtcdPathPrefix,
-		ServerList: []string{"http://127.0.0.1:4001"},
+		ServerList: []string{"http://127.0.0.1:2379"},
 	}
 	storageFactory := genericapiserver.NewDefaultStorageFactory(config, "application/json", api.Codecs, genericapiserver.NewDefaultResourceEncodingConfig(), genericapiserver.NewResourceConfig())
 
@@ -60,7 +60,7 @@ func Run(serverOptions *genericoptions.ServerRunOptions) error {
 	// Set ServiceClusterIPRange
 	_, serviceClusterIPRange, _ := net.ParseCIDR("10.0.0.0/24")
 	serverOptions.ServiceClusterIPRange = *serviceClusterIPRange
-	serverOptions.StorageConfig.ServerList = []string{"http://127.0.0.1:4001"}
+	serverOptions.StorageConfig.ServerList = []string{"http://127.0.0.1:2379"}
 	genericapiserver.ValidateRunOptions(serverOptions)
 	config := genericapiserver.NewConfig(serverOptions)
 	config.Serializer = api.Codecs
