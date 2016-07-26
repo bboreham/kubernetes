@@ -56,6 +56,7 @@ func probeNetworkPluginsWithVendorCNIDirPrefix(pluginDir, vendorCNIDirPrefix str
 	configList := make([]network.NetworkPlugin, 0)
 	network, err := getDefaultCNINetwork(pluginDir, vendorCNIDirPrefix)
 	if err != nil {
+		glog.Warningf("Error finding default CNI network: %v", err)
 		return configList
 	}
 	return append(configList, &cniNetworkPlugin{
