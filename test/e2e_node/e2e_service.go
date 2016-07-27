@@ -26,6 +26,7 @@ import (
 	"os/exec"
 	"path"
 	"path/filepath"
+	"reflect"
 	"strconv"
 	"strings"
 	"syscall"
@@ -350,7 +351,16 @@ func (k *killCmd) Kill() error {
 		glog.V(2).Infof("Killing process %d (%s) with %s", pid, name, signal)
 		cmd := exec.Command("sudo", "kill", signal, strconv.Itoa(pid))
 		// Run the 'kill' command in a separate process group so sudo doesn't ignore it
-		cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
+		attrs := &syscall.SysProcAttr{}
+		// Hack to set unix-only field without build tags.
+		setpgidField := reflect.ValueOf(attrs).Elem().FieldByName("Setpgid")
+		if setpgidField.IsValid() {
+			setpgidField.Set(reflect.ValueOf(true))
+		} else {
+			return fmt.Errorf("Failed to set Setpgid field (non-unix build)")
+		}
+		cmd.SysProcAttr = attrs
+
 		_, err := cmd.Output()
 		if err != nil {
 			glog.Errorf("Error signaling process %d (%s) with %s: %v", pid, name, signal, err)
