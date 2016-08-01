@@ -328,7 +328,7 @@ function assemble-docker-flags {
     docker_opts+=" --log-level=warn"
   fi
   local use_net_plugin="true"
-  if [[ "${NETWORK_PROVIDER:-}" != "kubenet" && "${NETWORK_PROVIDER:-}" != "cni" ]]; then
+  if [[ "${NETWORK_PROVIDER:-}" != "kubenet" && "${NETWORK_PROVIDER:-}" != "cni"  && "${NETWORK_PROVIDER:-}" != "weave" ]]; then
     use_net_plugin="false"
     docker_opts+=" --bridge=cbr0"
   fi
