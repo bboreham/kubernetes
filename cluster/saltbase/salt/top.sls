@@ -22,7 +22,8 @@ base:
     - cni
 {% elif pillar.get('network_provider', '').lower() == 'cni' %}
     - cni
-{% elif pillar.get('network_provider', '').lower() == 'weave' %}
+{% endif %}
+{% if pillar.get('network_cni_provider', '').lower() == 'weave' %}
     - weave
 {% endif %}
 {% if grains['cloud'] is defined and grains['cloud'] == 'azure-legacy' %}
