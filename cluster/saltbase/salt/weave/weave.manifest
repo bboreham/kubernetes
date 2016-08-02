@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: weave-net
+  namespace: kube-system
+  labels:
+    kubernetes.io/cluster-service: "true"
+    k8s-app: weave-net
+spec:
+  hostNetwork: true
+  containers:
+    - name: weave
+      image: weaveworks/weave:1.6.0
+      command:
+        - /home/weave/weaver
+        - --port=6783
+        - --name=11:02:03:04:05:06
+        - --nickname={{ grains.id }}
+        - --datapath=datapath
+        - --ipalloc-range={{ pillar['cluster_cidr'] }}
+        - --http-addr=127.0.0.1:6784
+      securityContext:
+        privileged: true
+      volumeMounts:
+        - name: weavedb
+          mountPath: /data
+        - name: dockersock
+          mountPath: /var/run/docker.sock
+    - name: weaveproxy
+      image: weaveworks/weaveexec:1.6.0
+      env:
+      - name: EXEC_IMAGE
+        value: "weaveworks/weaveexec:1.6.0"
+      command:
+        - /home/weave/weaveproxy
+      securityContext:
+        privileged: true
+      volumeMounts:
+        - name: dockersock
+          mountPath: /var/run/docker.sock
+  volumes:
+    - name: weavedb
+      emptyDir: {}
+    - name: dockersock
+      hostPath:
+        path: /var/run/docker.sock

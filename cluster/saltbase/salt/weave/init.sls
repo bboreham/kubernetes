@@ -22,8 +22,9 @@
     - makedirs: True
     - mode: 644
 
-weave-node:
-  cmd.run:
-    - name: weave launch
-    - require:
-      - service: docker
+/etc/kubernetes/manifests/weave.manifest:
+  file.managed:
+    - source: salt://weave/weave.manifest
+    - group: root
+    - dir_mode: 644
+    - makedirs: True
