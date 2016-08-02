@@ -25,6 +25,7 @@
 /etc/kubernetes/manifests/weave.manifest:
   file.managed:
     - source: salt://weave/weave.manifest
+    - template: jinja
     - group: root
     - dir_mode: 644
     - makedirs: True

@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: weave-launch
+  namespace: kube-system
+  labels:
+    kubernetes.io/cluster-service: "true"
+    k8s-app: weave-net
+spec:
+  hostNetwork: true
+  containers:
+    - name: weave-launch
+      image: weaveworks/weaveexec:1.6.0
+      command:
+        - /home/weave/weave
+        - --local
+        - restart
+        - nosuchcontainer
+      securityContext:
+        privileged: true
+  restartPolicy: Never

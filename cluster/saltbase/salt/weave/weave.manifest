@@ -26,18 +26,6 @@ spec:
           mountPath: /data
         - name: dockersock
           mountPath: /var/run/docker.sock
-    - name: weaveproxy
-      image: weaveworks/weaveexec:1.6.0
-      env:
-      - name: EXEC_IMAGE
-        value: "weaveworks/weaveexec:1.6.0"
-      command:
-        - /home/weave/weaveproxy
-      securityContext:
-        privileged: true
-      volumeMounts:
-        - name: dockersock
-          mountPath: /var/run/docker.sock
   volumes:
     - name: weavedb
       emptyDir: {}
