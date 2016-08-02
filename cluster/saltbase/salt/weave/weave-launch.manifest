@@ -12,10 +12,9 @@ spec:
     - name: weave-launch
       image: weaveworks/weaveexec:1.6.0
       command:
-        - /home/weave/weave
-        - --local
-        - restart
-        - nosuchcontainer
+        - /bin/sh
+        - -c
+        - "/home/weave/weave --local restart nosuchcontainer; /home/weave/weave --local expose"
       securityContext:
         privileged: true
   restartPolicy: Never
