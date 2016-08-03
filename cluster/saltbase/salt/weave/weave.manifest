@@ -14,7 +14,6 @@ spec:
       command:
         - /home/weave/weaver
         - --port=6783
-        - --name=11:02:03:04:05:06
         - --nickname={{ grains.id }}
         - --datapath=datapath
         - --ipalloc-range={{ pillar['cluster_cidr'] }}
@@ -26,6 +25,15 @@ spec:
           mountPath: /data
         - name: dockersock
           mountPath: /var/run/docker.sock
+    - name: weave-launch
+      image: weaveworks/weaveexec:1.6.0
+      command:
+        - /bin/sh
+        - -c
+        - "/home/weave/weave --local restart nosuchcontainer && sleep 5 && /home/weave/weave --local expose"
+      securityContext:
+        privileged: true
+  restartPolicy: OnFailure
   volumes:
     - name: weavedb
       emptyDir: {}
