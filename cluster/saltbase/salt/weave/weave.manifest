@@ -23,7 +23,7 @@ spec:
         privileged: true
       volumeMounts:
         - name: weavedb
-          mountPath: /data
+          mountPath: /weavedb
     - name: weave-launch
       image: weaveworks/weaveexec:kube-test
       command:
