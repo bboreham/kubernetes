@@ -29,7 +29,7 @@ spec:
       command:
         - /bin/sh
         - -c
-        - "/home/weave/weave --local create-bridge; sleep 5; /home/weave/weave --local expose; tail -f /dev/null"
+        - "/home/weave/weave --local expose && tail -f /dev/null"
       volumeMounts:
         - name: dockersock
           mountPath: /var/run/docker.sock
