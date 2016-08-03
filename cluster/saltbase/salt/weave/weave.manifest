@@ -10,7 +10,7 @@ spec:
   hostNetwork: true
   containers:
     - name: weave
-      image: weaveworks/weave:1.6.0
+      image: weaveworks/weave:kube-test
       command:
         - /home/weave/weaver
         - --port=6783
@@ -18,19 +18,21 @@ spec:
         - --datapath=datapath
         - --ipalloc-range={{ pillar['cluster_cidr'] }}
         - --http-addr=127.0.0.1:6784
+        - --docker-api=''
       securityContext:
         privileged: true
       volumeMounts:
         - name: weavedb
           mountPath: /data
-        - name: dockersock
-          mountPath: /var/run/docker.sock
     - name: weave-launch
-      image: weaveworks/weaveexec:1.6.0
+      image: weaveworks/weaveexec:kube-test
       command:
         - /bin/sh
         - -c
-        - "/home/weave/weave --local restart nosuchcontainer && sleep 5 && /home/weave/weave --local expose"
+        - "/home/weave/weave --local create-bridge; sleep 5; /home/weave/weave --local expose"
+      volumeMounts:
+        - name: dockersock
+          mountPath: /var/run/docker.sock
       securityContext:
         privileged: true
   restartPolicy: OnFailure
