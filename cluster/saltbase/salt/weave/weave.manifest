@@ -29,13 +29,13 @@ spec:
       command:
         - /bin/sh
         - -c
-        - "/home/weave/weave --local create-bridge; sleep 5; /home/weave/weave --local expose"
+        - "/home/weave/weave --local create-bridge; sleep 5; /home/weave/weave --local expose; tail -f /dev/null"
       volumeMounts:
         - name: dockersock
           mountPath: /var/run/docker.sock
       securityContext:
         privileged: true
-  restartPolicy: OnFailure
+  restartPolicy: Always
   volumes:
     - name: weavedb
       emptyDir: {}
