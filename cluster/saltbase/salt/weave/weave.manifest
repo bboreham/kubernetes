@@ -30,10 +30,14 @@ spec:
       command:
         - /bin/sh
         - -c
-        - "/home/weave/weave --local expose && tail -f /dev/null"
+        - "/home/weave/weave --local setup_cni && /home/weave/weave --local expose && tail -f /dev/null"
       volumeMounts:
         - name: dockersock
           mountPath: /var/run/docker.sock
+        - name: cni_bin
+          mountPath: /opt/cni/bin
+        - name: cni_conf
+          mountPath: /etc/cni/net.d
       securityContext:
         privileged: true
   restartPolicy: Always
@@ -43,3 +47,9 @@ spec:
     - name: dockersock
       hostPath:
         path: /var/run/docker.sock
+    - name: cni_bin
+      hostPath:
+        path: /opt/cni/bin
+    - name: cni_conf
+      hostPath:
+        path: /etc/cni/net.d
