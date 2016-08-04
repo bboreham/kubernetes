@@ -19,6 +19,7 @@ spec:
         - --ipalloc-range={{ pillar['cluster_cidr'] }}
         - --http-addr=127.0.0.1:6784
         - --docker-api=''
+        - --kube-peers
       securityContext:
         privileged: true
       volumeMounts:
